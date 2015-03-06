@@ -1,0 +1,12 @@
+{
+    "name": "mark/backgammonator",
+    "description": "3rd Year Project - Client/Server Backgammon Player",
+    "homepage": "https://github.com/magicmark/Backgammonator",
+    "authors": [
+        {
+            "name": "Mark Larah",
+            "email": "mark@larah.me"
+        }
+    ],
+    "require": {}
+}
