@@ -1,32 +1,35 @@
-<p class="text-center">
-
-  <div class="board">
+<div ng-controller="GameCtrl" class="board">
 
 
-    <div class="counter"></div>
-    <div class="counter"
 
-    style="left: 100px; top: 50px"
-    ></div>
+  <div class="ctr">
+
+    <div ng-repeat="checker in checkers track by checker.id">
+      <div
+        class="counter player{{checker.player}} draggable"
+        id="counter{{checker.id}}"
+        style="{{checker.getStyle()}}"></div>
+    </div>
+
 
     <div class="half">
 
       <div class="row top">
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
+        <div class="arrow" id="arrow11"></div>
+        <div class="arrow" id="arrow10"></div>
+        <div class="arrow" id="arrow9"></div>
+        <div class="arrow" id="arrow8"></div>
+        <div class="arrow" id="arrow7"></div>
+        <div class="arrow" id="arrow6"></div>
       </div>
 
       <div class="row bottom">
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
+        <div class="arrow" id="arrow12"></div>
+        <div class="arrow" id="arrow13"></div>
+        <div class="arrow" id="arrow14"></div>
+        <div class="arrow" id="arrow15"></div>
+        <div class="arrow" id="arrow16"></div>
+        <div class="arrow" id="arrow17"></div>
       </div>
 
     </div>
@@ -34,25 +37,25 @@
     <div class="half">
 
       <div class="row top">
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
+        <div class="arrow" id="arrow5"></div>
+        <div class="arrow" id="arrow4"></div>
+        <div class="arrow" id="arrow3"></div>
+        <div class="arrow" id="arrow2"></div>
+        <div class="arrow" id="arrow1"></div>
+        <div class="arrow" id="arrow0"></div>
       </div>
 
       <div class="row bottom">
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
-        <div class="arrow"></div>
+        <div class="arrow" id="arrow18"></div>
+        <div class="arrow" id="arrow19"></div>
+        <div class="arrow" id="arrow20"></div>
+        <div class="arrow" id="arrow21"></div>
+        <div class="arrow" id="arrow22"></div>
+        <div class="arrow" id="arrow23"></div>
       </div>
 
     </div>
 
   </div>
+</div>
 
-</p>

@@ -1,17 +1,21 @@
 .board {
-/*  margin-left: auto;
-  margin-right: auto;
-  display: block;
-  width: 900px;*/
-  display: block;
-  position: relative;
+  text-align: center;
+}
+
+.ctr {
+/*  position: relative;
+*/  display: block;
 }
 
 .half {
   display: inline-block;
   margin-right: 10px;
-  border: 2px solid red;
-  padding: 20px;
+  border: 4px solid red;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-top: 8px;
+  padding-bottom: 6px;
+  z-index: 10;
 }
 
 .arrow {
@@ -34,7 +38,7 @@
 }
 
 .arrow:nth-child(even) {
-    border-color: skyblue transparent transparent transparent;
+  border-color: skyblue transparent transparent transparent;
 }
 
 .arrow.top {
@@ -42,10 +46,18 @@
 }
 
 .counter {
+  border: 1px solid green;
   width: 50px;
   height: 50px;
-  background-color: red;
   border-radius: 25px;
   position: absolute;
-  cursor: grab;
+  z-index: 20;
+}
+
+.counter.player1 {
+    background-color: red;
+}
+
+.counter.player2 {
+    background-color: orange;
 }
