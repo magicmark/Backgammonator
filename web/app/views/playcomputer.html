@@ -1,0 +1,8 @@
+<p class="text-center" ng-if="!playingGame">
+  <button 
+    type="button"
+    class="btn btn-primary btn-lg"
+    ng-click="startNewGame()">Start New Game</button>
+</p>
+
+<div ng-if="playingGame" ng-include="'views/assets/board.html'"></div>
