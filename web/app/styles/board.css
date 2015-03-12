@@ -8,14 +8,15 @@
 }
 
 .half {
-  display: inline-block;
+  display: inline-table;
   margin-right: 10px;
   border: 4px solid red;
-  padding-left: 20px;
-  padding-right: 20px;
-  padding-top: 8px;
-  padding-bottom: 6px;
+/*  padding-left: 10px;
+  padding-right: 10px;*/
+/*  padding-top: -20px;
+  padding-bottom: -20px;*/
   z-index: 10;
+  border-spacing: 10px 1px;
 }
 
 .arrow {
@@ -23,7 +24,7 @@
   height: 0;
   border-style: solid;
   border-color: #007bff transparent transparent transparent;
-  display: inline-block;
+  display: table-cell;
 }
 
 .row.top .arrow {
@@ -32,17 +33,15 @@
 
 .row.bottom .arrow {
   border-width: 270px 30px 0 30px;
-
-    transform: rotate(180deg);
-
+  transform: rotate(180deg);
 }
 
 .arrow:nth-child(even) {
   border-color: skyblue transparent transparent transparent;
 }
 
-.arrow.top {
-
+.arrow.highlight {
+  border-color: black transparent transparent transparent;
 }
 
 .counter {

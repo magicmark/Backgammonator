@@ -4,32 +4,30 @@
 
   <div class="ctr">
 
-    <div ng-repeat="checker in checkers track by checker.id">
       <div
+        ng-repeat="checker in checkers track by checker.id"
         class="counter player{{checker.player}} draggable"
         id="counter{{checker.id}}"
         style="{{checker.getStyle()}}"></div>
-    </div>
 
 
     <div class="half">
 
       <div class="row top">
-        <div class="arrow" id="arrow11"></div>
-        <div class="arrow" id="arrow10"></div>
-        <div class="arrow" id="arrow9"></div>
-        <div class="arrow" id="arrow8"></div>
-        <div class="arrow" id="arrow7"></div>
-        <div class="arrow" id="arrow6"></div>
+        <div
+          ng-repeat="n in [11, 10, 9, 8, 7, 6] track by $index"
+          class="arrow"
+          id="arrow{{n}}"
+          ng-class="{highlight: arrows[n].styles.highlight}"></div>
       </div>
 
       <div class="row bottom">
-        <div class="arrow" id="arrow12"></div>
-        <div class="arrow" id="arrow13"></div>
-        <div class="arrow" id="arrow14"></div>
-        <div class="arrow" id="arrow15"></div>
-        <div class="arrow" id="arrow16"></div>
-        <div class="arrow" id="arrow17"></div>
+        <div
+          ng-repeat="n in [12, 13, 14, 15, 16, 17] track by $index"
+          class="arrow"
+          id="arrow{{n}}"
+          ng-class="{highlight: arrows[n].styles.highlight}">
+        </div>
       </div>
 
     </div>
@@ -37,21 +35,21 @@
     <div class="half">
 
       <div class="row top">
-        <div class="arrow" id="arrow5"></div>
-        <div class="arrow" id="arrow4"></div>
-        <div class="arrow" id="arrow3"></div>
-        <div class="arrow" id="arrow2"></div>
-        <div class="arrow" id="arrow1"></div>
-        <div class="arrow" id="arrow0"></div>
+        <div
+          ng-repeat="n in [5, 4, 3, 2, 1, 0] track by $index"
+          class="arrow"
+          id="arrow{{n}}"
+          ng-class="{highlight: arrows[n].styles.highlight}">
+        </div>
       </div>
 
       <div class="row bottom">
-        <div class="arrow" id="arrow18"></div>
-        <div class="arrow" id="arrow19"></div>
-        <div class="arrow" id="arrow20"></div>
-        <div class="arrow" id="arrow21"></div>
-        <div class="arrow" id="arrow22"></div>
-        <div class="arrow" id="arrow23"></div>
+        <div
+          ng-repeat="n in [18, 19, 20, 21, 22, 23] track by $index"
+          class="arrow"
+          id="arrow{{n}}"
+          ng-class="{highlight: arrows[n].styles.highlight}">
+        </div>
       </div>
 
     </div>

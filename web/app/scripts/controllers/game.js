@@ -8,7 +8,7 @@
  * Controller of the backgammonatorApp
  */
 angular.module('backgammonatorApp')
-  .controller('GameCtrl', function ($scope) {
+  .controller('GameCtrl', function ($scope, $timeout) {
 
     // http://www.kirupa.com/html5/get_element_position_using_javascript.htm
     function getPosition(element) {
@@ -23,23 +23,26 @@ angular.module('backgammonatorApp')
         return { x: xPosition, y: yPosition };
     }
 
-    interact('.draggable')
-      .draggable({
+    interact('.draggable').draggable({
         // enable inertial throwing
         inertia: true,
         // keep the element within the area of it's parent
         restrict: {
-          restriction: "parent",
+          restriction: "self",
           endOnly: true,
           elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
         },
+        // snap: {
+        //   targets: [{ x: 500, y: 90 }],
+        //   endOnly: true
+        // },
 
         // call this function on every dragmove event
         onmove: function (event) {
           var target = event.target,
-              // keep the dragged position in the data-x/data-y attributes
-              x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-              y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+          // keep the dragged position in the data-x/data-y attributes
+          x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
+          y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
 
           // translate the element
           target.style.webkitTransform =
@@ -52,45 +55,56 @@ angular.module('backgammonatorApp')
         },
         // call this function on every dragend event
         onend: function (event) {
-          var textEl = event.target.querySelector('p');
 
-          textEl && (textEl.textContent =
-            'moved a distance of '
-            + (Math.sqrt(event.dx * event.dx +
-                         event.dy * event.dy)|0) + 'px');
+
         }
       });
 
 
       interact('.arrow').dropzone({
         // only accept elements matching this CSS selector
-        accept: '#counter',
+        accept: '.counter',
         // Require a 75% element overlap for a drop to be possible
         overlap: 0.1,
 
         // listen for drop related events:
 
         ondropactivate: function (event) {
+
           // add active dropzone feedback
           event.target.classList.add('drop-active');
         },
         ondragenter: function (event) {
-          var draggableElement = event.relatedTarget,
-              dropzoneElement = event.target;
+          var checkerId = event.relatedTarget.getAttribute("id").substring(7);
+          var arrowId   = event.target.getAttribute("id").substring(5);
 
-          // feedback the possibility of a drop
-          dropzoneElement.classList.add('drop-target');
-          draggableElement.classList.add('can-drop');
-          draggableElement.textContent = 'Dragged in';
+
+          if ($scope.checkers[checkerId].isLegalMove(arrowId)) {
+            console.log("highlighing" + arrowId);
+            $scope.arrows[arrowId].styles.highlight = true;
+            $scope.$apply();
+          }
+
+          // console.log(arrowId);
+          // var draggableElement = event.relatedTarget,
+          //     dropzoneElement = event.target;
+
+          // // feedback the possibility of a drop
+          // dropzoneElement.classList.add('drop-target');
+          // draggableElement.classList.add('can-drop');
+          // draggableElement.textContent = 'Dragged in';
         },
         ondragleave: function (event) {
-          // remove the drop feedback style
-          event.target.classList.remove('drop-target');
-          event.relatedTarget.classList.remove('can-drop');
-          event.relatedTarget.textContent = 'Dragged out';
+          var arrowId   = event.target.getAttribute("id").substring(5);
+          $scope.arrows[arrowId].styles.highlight = false;
+          // // remove the drop feedback style
+          // event.target.classList.remove('drop-target');
+          // event.relatedTarget.classList.remove('can-drop');
+          // event.relatedTarget.textContent = 'Dragged out';
         },
         ondrop: function (event) {
           event.relatedTarget.textContent = 'Dropped';
+
         },
         ondropdeactivate: function (event) {
           // remove active dropzone feedback
@@ -98,7 +112,6 @@ angular.module('backgammonatorApp')
           event.target.classList.remove('drop-target');
         }
       });
-
 
 
 
@@ -132,6 +145,10 @@ angular.module('backgammonatorApp')
         ].join("; ");
       }
 
+      this.isLegalMove = function () {
+        return true;
+      }
+
       $scope.arrows[_arrow].checkers.push(_id);
 
     }
@@ -144,12 +161,8 @@ angular.module('backgammonatorApp')
 
       this.checkers = [];
 
-      this.getX = function () {
-        return this.position.x - 25;
-      }
-
-      this.getY = function () {
-        return this.position.y - 270;
+      this.styles = {
+        highlight: false
       }
 
       this.getNextPosition = function () {
@@ -166,6 +179,9 @@ angular.module('backgammonatorApp')
           y: yPos
         }
       }
+
+      this.position = getPosition(document.querySelector("#arrow" + _id));
+
     }
 
     var setUpCheckers = function () {
@@ -185,7 +201,6 @@ angular.module('backgammonatorApp')
       $scope.arrows = [];
       for (var i = 0; i <= 23; i++) {
         $scope.arrows.push(new Arrow(i));
-        $scope.arrows[i].position = getPosition(document.querySelector("#arrow" + i));
       }
     };
 
@@ -195,7 +210,8 @@ angular.module('backgammonatorApp')
       setUpCheckers();
     };
 
-    init();
+    // We have to make sure DOM is loaded...
+    $timeout(init, 10);
 
 
 
