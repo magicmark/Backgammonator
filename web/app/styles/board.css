@@ -60,3 +60,16 @@
 .counter.player2 {
     background-color: orange;
 }
+
+/*
+==-=-=-=-==
+  Buttons
+==-=-=-=-==
+*/
+
+.controls {
+  width: 100%;
+  height: 60px;
+  text-align: right;
+  line-height: 60px;
+}

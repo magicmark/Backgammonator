@@ -8,7 +8,7 @@
  * Controller of the backgammonatorApp
  */
 angular.module('backgammonatorApp')
-  .controller('GameCtrl', function ($scope, $timeout) {
+  .controller('GameCtrl', function ($scope, $timeout, API) {
 
     // http://www.kirupa.com/html5/get_element_position_using_javascript.htm
     function getPosition(element) {
@@ -23,38 +23,60 @@ angular.module('backgammonatorApp')
         return { x: xPosition, y: yPosition };
     }
 
+    var goToPoint = function goToPoint(event) {
+      var x, y, checkerId;
+
+      checkerId = event.target.getAttribute("id").substring(7);
+
+      // keep the dragged position in the data-x/data-y attributes
+      x = (parseFloat(event.target.getAttribute('data-x')) || 0) + event.dx,
+      y = (parseFloat(event.target.getAttribute('data-y')) || 0) + event.dy;
+
+      // translate the element
+      event.target.style.webkitTransform =
+      event.target.style.transform =
+        'translate(' + x + 'px, ' + y + 'px)';
+
+      updatePosition(checkerId, x, y);
+
+    };
+
+    var snap = function snap (counterId, _x, _y) {
+      move("#counter" + counterId).to(_x, _y).end();
+      updatePosition(counterId, _x, _y);
+      $scope.checkers[counterId].anchor = { x: _x, y: _y}
+    }
+
+    var updatePosition = function updatePosition (counterId, _x, _y) {
+      document.querySelector("#counter" + counterId).setAttribute('data-x', _x);
+      document.querySelector("#counter" + counterId).setAttribute('data-y', _y);
+    };
+
     interact('.draggable').draggable({
         // enable inertial throwing
         inertia: true,
         // keep the element within the area of it's parent
         restrict: {
-          restriction: "self",
+          restriction: "parent",
           endOnly: true,
           elementRect: { top: 0, left: 0, bottom: 1, right: 1 }
         },
-        // snap: {
-        //   targets: [{ x: 500, y: 90 }],
-        //   endOnly: true
-        // },
-
-        // call this function on every dragmove event
-        onmove: function (event) {
-          var target = event.target,
-          // keep the dragged position in the data-x/data-y attributes
-          x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx,
-          y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
-
-          // translate the element
-          target.style.webkitTransform =
-          target.style.transform =
-            'translate(' + x + 'px, ' + y + 'px)';
-
-          // update the posiion attributes
-          target.setAttribute('data-x', x);
-          target.setAttribute('data-y', y);
+        snap: {
+          relativePoints: [{ x: 0  , y: 0   }],
+          endOnly: true
         },
+
+        onstart: function (event) {
+          var checkerId = event.target.getAttribute("id").substring(7);
+          //$scope.checkers[checkerId].anchor = {x: event.clientX0, y: event.clientY0};
+          console.log('setting anchor as ', {x: event.clientX0, y: event.clientY0});
+        },
+
+        onmove: goToPoint,
         // call this function on every dragend event
         onend: function (event) {
+          var checkerId = event.target.getAttribute("id").substring(7);
+          console.log('ended' + checkerId);
 
 
         }
@@ -72,16 +94,20 @@ angular.module('backgammonatorApp')
         ondropactivate: function (event) {
 
           // add active dropzone feedback
+          console.log('yoyo');
           event.target.classList.add('drop-active');
         },
         ondragenter: function (event) {
           var checkerId = event.relatedTarget.getAttribute("id").substring(7);
           var arrowId   = event.target.getAttribute("id").substring(5);
 
+          console.log("canDrop" + checkerId);
 
           if ($scope.checkers[checkerId].isLegalMove(arrowId)) {
             console.log("highlighing" + arrowId);
-            $scope.arrows[arrowId].styles.highlight = true;
+            console.log("canDrop" + checkerId);
+            $scope.checkers[checkerId].styles.canDrop = true;
+            $scope.arrows[arrowId].styles.highlight   = true;
             $scope.$apply();
           }
 
@@ -95,33 +121,26 @@ angular.module('backgammonatorApp')
           // draggableElement.textContent = 'Dragged in';
         },
         ondragleave: function (event) {
+          var checkerId = event.relatedTarget.getAttribute("id").substring(7);
           var arrowId   = event.target.getAttribute("id").substring(5);
           $scope.arrows[arrowId].styles.highlight = false;
-          // // remove the drop feedback style
-          // event.target.classList.remove('drop-target');
-          // event.relatedTarget.classList.remove('can-drop');
-          // event.relatedTarget.textContent = 'Dragged out';
+          $scope.checkers[checkerId].styles.canDrop = false;
+          $scope.$apply();
         },
         ondrop: function (event) {
-          event.relatedTarget.textContent = 'Dropped';
-
+          var arrowId   = event.target.getAttribute("id").substring(5);
+          var checkerId = event.relatedTarget.getAttribute("id").substring(7);
+          console.log('dropped on ' , arrowId);
+          var oldPos = $scope.checkers[checkerId].anchor;
+          console.log('going to ', oldPos);
+          snap(checkerId, oldPos.x, oldPos.y);
         },
         ondropdeactivate: function (event) {
-          // remove active dropzone feedback
-          event.target.classList.remove('drop-active');
-          event.target.classList.remove('drop-target');
+          // // remove active dropzone feedback
+          // event.target.classList.remove('drop-active');
+          // event.target.classList.remove('drop-target');
         }
       });
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -129,28 +148,26 @@ angular.module('backgammonatorApp')
       this.id        = _id;
       this.player    = _player;
       this.currArrow = _arrow;
-      this.position  = {
-        x: _x,
-        y: _y
-      }
 
-      this.goToArrow = function (_arrow) {
+      this.anchor = { x: _x, y: _y };
 
-      }
+      this.styles = {
+        canDrop: false
+      };
 
-      this.getStyle = function () {
-        return [ 
-          "left: " + this.position.x + "px",
-          "top: "  + this.position.y + "px"
-        ].join("; ");
-      }
+      this.moveToArrow = function (_arrow) {
+
+      };
 
       this.isLegalMove = function () {
         return true;
-      }
+      };
 
       $scope.arrows[_arrow].checkers.push(_id);
 
+      $timeout(function () {
+        snap(_id, _x, _y);
+      }, 15);
     }
 
     function Arrow (_id) {
@@ -165,19 +182,22 @@ angular.module('backgammonatorApp')
         highlight: false
       }
 
-      this.getNextPosition = function () {
+      this.getPosition = function (n) {
         var yPos;
 
-        if (me.type == 'top') {
-          yPos = this.position.y - 270 + (this.checkers.length * 12);
-        } else {
-          yPos = this.position.y - (50 + this.checkers.length * 12);
-        }
-
+        yPos = 
+          (me.type == 'top') ? 
+          this.position.y - 270 + (n * 12) :
+          yPos = this.position.y - (50 + n * 12);
+        
         return {
-          x: this.position.x - 25,
-          y: yPos
+          x: this.position.x - 25 - 160,
+          y: yPos - 103
         }
+      }
+
+      this.getNextPosition = function () {
+        return this.getPosition(this.checkers.length);
       }
 
       this.position = getPosition(document.querySelector("#arrow" + _id));
@@ -213,6 +233,17 @@ angular.module('backgammonatorApp')
     // We have to make sure DOM is loaded...
     $timeout(init, 10);
 
+
+    $scope.controls = {
+      shouldShowDice: function () {
+        return true;
+      },
+      roll: function () {
+        API.rollDice().then(function (result) {
+          console.log(result);
+        });
+      }
+    };
 
 
 

@@ -11,7 +11,20 @@ db.once('open', function (callback) {
 
 
 var gameSchema = mongoose.Schema({
-  player1: Number
+  player1: Number,
+  player2: Number,
+  diceRoll: [ Number ],
+  turn: Number,
+  moves: [{
+    player: Number,
+    rolled: [ Number ],
+    actions: {
+      type: String,
+      checker: Number,
+      from: Number,
+      to: Number
+    }
+  }]
 });
 
 var models = {};

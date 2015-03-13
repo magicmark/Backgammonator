@@ -8,7 +8,8 @@
         ng-repeat="checker in checkers track by checker.id"
         class="counter player{{checker.player}} draggable"
         id="counter{{checker.id}}"
-        style="{{checker.getStyle()}}"></div>
+        ng-class="{canDrop: checker.styles.canDrop}"
+      ></div>
 
 
     <div class="half">
@@ -55,5 +56,15 @@
     </div>
 
   </div>
+
+  <div class="controls">
+    <button 
+      type="button"
+      class="btn btn-info"
+      ng-if="controls.shouldShowDice()"
+      ng-click="controls.roll()">Roll Dice!</button>
+  </div>
+
+
 </div>
 

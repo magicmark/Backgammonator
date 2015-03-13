@@ -1,0 +1,5 @@
+logbook
+=======
+
+How to do continual running of algorithm? spawn separate process or just run each time?
+ideally, run continually, but for now, run each time.
