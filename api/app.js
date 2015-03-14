@@ -1,6 +1,8 @@
+var random = require('./random.js');
+
 var db = require('./database')
 var express = require('express')
-var bodyParser     =        require("body-parser");
+var bodyParser = require("body-parser");
 
 var app = express();
 
@@ -10,6 +12,9 @@ app.use(bodyParser.json());
 
 var Game = db.models.game;
 
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 
 // http://stackoverflow.com/a/26821795/4396258
 app.all('*', function(req, res, next) {
@@ -21,6 +26,22 @@ app.all('*', function(req, res, next) {
 
 app.get('/', function(request, response) {
   response.send('Hello World!');
+})
+
+// TODO: should rename lol? change 
+app.get('/move', function(req, res) {
+  var position = req.body.position;
+  console.dir(position);
+  random.setInitPosition(position);
+  random.setUp({
+    computer: 0,
+    opponent: 5
+  });
+  var move = random.nextMove();
+  res.json({
+    moves: move.previousTransitions,
+    dice: move.dice
+  });
 })
 
 app.post('/move', function(req, res) {
@@ -69,7 +90,9 @@ app.post('/newGame', function (req, res) {
 })
 
 app.post('/rollDice', function(req, res) {
-  res.json({'results' : [ 4, 6 ]});
+  var die1 = getRandomInt(1, 7);
+  var die2 = getRandomInt(1, 7);
+  res.json({'results' : [ die1, die2 ]});
 })
 
 db.connected(function () {

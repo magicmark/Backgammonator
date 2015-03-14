@@ -76,9 +76,6 @@ angular.module('backgammonatorApp')
         // call this function on every dragend event
         onend: function (event) {
           var checkerId = event.target.getAttribute("id").substring(7);
-          console.log('ended' + checkerId);
-
-
         }
       });
 
@@ -94,8 +91,12 @@ angular.module('backgammonatorApp')
         ondropactivate: function (event) {
 
           // add active dropzone feedback
-          console.log('yoyo');
-          event.target.classList.add('drop-active');
+          // console.log('yoyo');
+          // event.target.classList.add('drop-active');
+          // var checkerId = event.relatedTarget.getAttribute("id").substring(7);
+          // var arrowId   = event.target.getAttribute("id").substring(5);
+          // $scope.$apply();
+
         },
         ondragenter: function (event) {
           var checkerId = event.relatedTarget.getAttribute("id").substring(7);
@@ -106,8 +107,7 @@ angular.module('backgammonatorApp')
           if ($scope.checkers[checkerId].isLegalMove(arrowId)) {
             console.log("highlighing" + arrowId);
             console.log("canDrop" + checkerId);
-            $scope.checkers[checkerId].styles.canDrop = true;
-            $scope.arrows[arrowId].styles.highlight   = true;
+            $scope.arrows[arrowId].styles.highlight = true;
             $scope.$apply();
           }
 
@@ -124,19 +124,35 @@ angular.module('backgammonatorApp')
           var checkerId = event.relatedTarget.getAttribute("id").substring(7);
           var arrowId   = event.target.getAttribute("id").substring(5);
           $scope.arrows[arrowId].styles.highlight = false;
-          $scope.checkers[checkerId].styles.canDrop = false;
           $scope.$apply();
         },
         ondrop: function (event) {
           var arrowId   = event.target.getAttribute("id").substring(5);
           var checkerId = event.relatedTarget.getAttribute("id").substring(7);
-          console.log('dropped on ' , arrowId);
-          var oldPos = $scope.checkers[checkerId].anchor;
-          console.log('going to ', oldPos);
-          snap(checkerId, oldPos.x, oldPos.y);
+
+          if ($scope.checkers[checkerId].isLegalMove(arrowId)) {
+            //$scope.checkers[checkerId].moveToArrow(arrowId);
+            //$scope.arrows[$scope.checkers[checkerId].currArrow].moveTopTo($scope.arrows[arrowId]);
+            $scope.checkers[checkerId].moveToArrow($scope.arrows[arrowId]);
+            makeComputerMove();
+          } else {
+            var oldPos = $scope.checkers[checkerId].anchor;
+            snap(checkerId, oldPos.x, oldPos.y);
+          }
+
+
+          $scope.$apply();
         },
         ondropdeactivate: function (event) {
           // // remove active dropzone feedback
+          var arrowId   = event.target.getAttribute("id").substring(5);
+          var checkerId = event.relatedTarget.getAttribute("id").substring(7);
+          
+          $scope.arrows[arrowId].styles.highlight = false;
+         // if ($scope.checkers[checkerId].isLegalMove(arrowId)) {
+
+          $scope.$apply();
+
           // event.target.classList.remove('drop-active');
           // event.target.classList.remove('drop-target');
         }
@@ -147,7 +163,7 @@ angular.module('backgammonatorApp')
     function Checker (_id, _arrow, _player, _x, _y) {
       this.id        = _id;
       this.player    = _player;
-      this.currArrow = _arrow;
+      this.currArrow = _arrow; // the id of the arrow
 
       this.anchor = { x: _x, y: _y };
 
@@ -155,12 +171,53 @@ angular.module('backgammonatorApp')
         canDrop: false
       };
 
-      this.moveToArrow = function (_arrow) {
+      this.getCurrArrow = function () {
+        return $scope.arrows[this.currArrow];
+      }
 
+      this.isLegalMove = function (arrowId) {
+
+        if (!$scope.canMove) {
+          // Game isn't ready to allow moves yet
+          return false;
+        }
+
+        if (arrowId < this.currArrow) {
+          // We can't move backwards!
+          return false
+        }
+
+        if ( 
+          (arrowId != (this.currArrow + $scope.dice[0] + $scope.dice[1])) &&
+          (arrowId != (this.currArrow + $scope.dice[0])) &&
+          (arrowId != (this.currArrow + $scope.dice[1]))) {
+          // Not a valid move with the given dice roll
+          return false;
+        }
+
+        var arrow = $scope.arrows[arrowId];
+        if (!arrow.checkers.length) {
+          // Empty array of checkers, so valid move
+          return true
+        }
+
+        var topCheckerID = arrow.getTopCheckerID();
+        if ($scope.checkers[topCheckerID].player != 5) {
+          // Top checker isn't mine, so we can't go on it
+          return false
+        }
+
+        return true;
       };
 
-      this.isLegalMove = function () {
-        return true;
+      this.moveToArrow = function (arrowToMoveTo) {
+        console.log("Before move: " + this.getCurrArrow().checkers);
+        var thisCheckerIndex = this.getCurrArrow().checkers.indexOf(this.id); // where is this checker in the array of checkers?
+        this.getCurrArrow().checkers.splice(thisCheckerIndex, 1);
+        console.log("After splice: " + this.getCurrArrow().checkers);
+        arrowToMoveTo.checkers.push(this.id);
+        this.currArrow = arrowToMoveTo.id;
+        snap(this.id, arrowToMoveTo.getNextPosition().x, arrowToMoveTo.getNextPosition().y);
       };
 
       $scope.arrows[_arrow].checkers.push(_id);
@@ -182,6 +239,10 @@ angular.module('backgammonatorApp')
         highlight: false
       }
 
+      this.moveTopTo = function (arrowToMoveTo) {
+        $scope.checkers[this.getTopCheckerID()].moveToArrow(arrowToMoveTo);
+      }
+
       this.getPosition = function (n) {
         var yPos;
 
@@ -196,6 +257,11 @@ angular.module('backgammonatorApp')
         }
       }
 
+      this.getTopCheckerID = function () {
+        if (!this.checkers.length) return undefined;
+        return this.checkers[this.checkers.length-1];
+      }
+
       this.getNextPosition = function () {
         return this.getPosition(this.checkers.length);
       }
@@ -208,13 +274,19 @@ angular.module('backgammonatorApp')
       $scope.checkers = [];
       for (var i = 0; i < 15; i++) {
         var nextPos = $scope.arrows[0].getNextPosition();
-        $scope.checkers.push(new Checker(i, 0, 1, nextPos.x, nextPos.y));
+        $scope.checkers.push(new Checker(i, 0, 5, nextPos.x, nextPos.y));
       }
 
-      for (var i = 14; i >= 0; i--) {
+      // for (var i = 14; i >= 0; i--) {
+      //   var nextPos = $scope.arrows[23].getNextPosition();
+      //   $scope.checkers.push(new Checker(15+i, 23, 0, nextPos.x, nextPos.y));
+      // }
+
+      for (var i = 15; i < 30; i++) {
         var nextPos = $scope.arrows[23].getNextPosition();
-        $scope.checkers.push(new Checker(15+i, 23, 2, nextPos.x, nextPos.y));
+        $scope.checkers.push(new Checker(i, 23, 0, nextPos.x, nextPos.y));
       }
+
     };
 
     var setUpArrows = function () {
@@ -225,7 +297,10 @@ angular.module('backgammonatorApp')
     };
 
     var init = function init() {
+      $scope.canMove = false;
+      $scope.dice = [];
       $scope.playingGame = false;
+      $scope.dicerollmessage = "";
       setUpArrows();
       setUpCheckers();
     };
@@ -234,15 +309,61 @@ angular.module('backgammonatorApp')
     $timeout(init, 10);
 
 
+    // return a position that can be read by API
+    var ng2api = function () {
+      var position = {
+        checkers: {},
+        arrows: [],
+        me: 5
+      };
+
+      for (var i in $scope.checkers) {
+        position.checkers[$scope.checkers[i].id] = $scope.checkers[i].player
+      }
+      for (var i in $scope.arrows) {
+        var arrow = {
+          id: $scope.arrows[i].id,
+          checkers: $scope.arrows[i].checkers
+        }
+        position.arrows.push(arrow);
+      }
+
+      return position;
+    }
+
+    var makeComputerMove = function () {
+      $scope.canMove = false;
+      $scope.dicerollmessage = "Waiting for server...";
+      API.askForMove(ng2api()).then(function (result) {
+        console.log('got move!');
+        console.dir(result);
+        var arrowToMoveFrom = $scope.arrows[result.moves[0].from];
+        var arrowToMoveTo = $scope.arrows[result.moves[0].to];
+
+        // var topCheckerIDFrom = arrowToMoveFrom.checkers[arrowToMoveFrom.checkers.length-1];
+        console.log("SNAPPING TO " + arrowToMoveTo.id + "from" + arrowToMoveFrom.id);
+        $scope.dicerollmessage = "Computer rolled: " + JSON.stringify(result.dice, null, 2) + "!";
+
+        // snap(arrowToMoveFrom.getTopCheckerID(), arrowToMoveTo.getNextPosition().x, arrowToMoveTo.getNextPosition().y);
+        arrowToMoveFrom.moveTopTo(arrowToMoveTo);
+      });
+
+    }
+
+
     $scope.controls = {
       shouldShowDice: function () {
         return true;
       },
       roll: function () {
         API.rollDice().then(function (result) {
-          console.log(result);
-        });
+          $scope.dice = result.results;
+          $scope.canMove = true;
+          $scope.dicerollmessage = "You rolled: " + JSON.stringify(result.results, null, 2) + "!";
+        })
       }
+      
+
     };
 
 

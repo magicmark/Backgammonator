@@ -53,11 +53,11 @@
   z-index: 20;
 }
 
-.counter.player1 {
+.counter.player0 {
     background-color: red;
 }
 
-.counter.player2 {
+.counter.player5 {
     background-color: orange;
 }
 

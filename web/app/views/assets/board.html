@@ -6,9 +6,9 @@
 
       <div
         ng-repeat="checker in checkers track by checker.id"
-        class="counter player{{checker.player}} draggable"
+        class="counter player{{checker.player}}"
         id="counter{{checker.id}}"
-        ng-class="{canDrop: checker.styles.canDrop}"
+        ng-class="{canDrop: checker.styles.canDrop, draggable: checker.player == 5}"
       ></div>
 
 
@@ -58,6 +58,7 @@
   </div>
 
   <div class="controls">
+    <p class="text-left" style="float:left;">{{ dicerollmessage }}</p>
     <button 
       type="button"
       class="btn btn-info"

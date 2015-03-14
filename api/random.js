@@ -1,40 +1,35 @@
 'use strict';
 
-module.exports = function () {
-  // Random AI  
+var Mechanics = require("./mechanics.js");
 
-  var arrows = [];
-  var checkers = [];
+var initialPosition = undefined;
 
-  function Arrow (_id) {
-    this.id = _id;
-    this.checkers = [];
-  }
+// MDN JS Docs
+function getRandomInt(min, max) {
+  return Math.floor(Math.random() * (max - min)) + min;
+}
 
-  function Checker (_id, _player) {
-    this.id = _id;
-    this.player = _player;
-  }
+var chooseRandom = function () {
+  var die1, die2;
 
+  die1 = getRandomInt(1, 7);
+  die2 = getRandomInt(1, 7);
 
-  // Set Up Arrows
-  for (var i = 0; i <= 23; i++) {
-    arrows.push(new Arrow(i));
-  }
-
-  // Set Up Checkers
-  for (var i = 0; i < 15; i++) {
-    checkers.push(new Checker(i, 1);
-    arrows[0].checkers.push(i);
-  }
-
-  for (var i = 14; i >= 0; i--) {
-    checkers.push(new Checker(15+i, 2);
-    arrows[23].checkers.push(i);
-  }
-
-  return {
-    start
-  }
-
+  var position = initialPosition || Mechanics.initPos();
+  var availablePositions = Mechanics.createPositions(position, die1, die2);
+  return availablePositions[getRandomInt(0, availablePositions.length)].getNewPosition();
 };
+
+module.exports = {
+  // Random AI 
+  setUp: function (players) {
+    Mechanics.setPlayers({
+      computer: players.computer,
+      opponent: players.opponent
+    });
+  },
+  setInitPosition: function (_initPos) {
+    initialPosition = _initPos;
+  },
+  nextMove: chooseRandom
+}
