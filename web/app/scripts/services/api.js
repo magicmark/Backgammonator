@@ -25,7 +25,7 @@ angular.module('backgammonatorApp')
       };
 
       if (data) {
-        req.data = data;
+        req.data = {position: data};
       }
 
       $http(req).success(function(data, status, headers, config) {
@@ -44,7 +44,7 @@ angular.module('backgammonatorApp')
         return doHTTP('POST', '/rollDice');
       },
       askForMove: function (position) {
-        return doHTTP('GET', '/move', position)
+        return doHTTP('POST', '/getmove', position)
       }
     };
 

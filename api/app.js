@@ -28,8 +28,15 @@ app.get('/', function(request, response) {
   response.send('Hello World!');
 })
 
-// TODO: should rename lol? change 
-app.get('/move', function(req, res) {
+
+
+app.post('/sup', function(request, response) {
+  response.send("sup - " + request.body.sup);
+})
+
+app.post('/getmove', function(req, res) {
+  console.log(req.body);
+  console.dir(req.body);
   var position = req.body.position;
   console.dir(position);
   random.setInitPosition(position);
@@ -63,7 +70,6 @@ app.post('/move', function(req, res) {
       res.json({success: false, error: err.message});
       return ;
     }
-
 
     game.moves.push(move);
     game.save(function (err) {

@@ -169,8 +169,8 @@ var initPos = function () {
   // }
 
   for (var i = 15; i < 30; i++) {
-    initialPosition.checkers[i] = new Checker(15, computer);
-    initialPosition.arrows[23].checkers.push(15);
+    initialPosition.checkers[i] = new Checker(i, computer);
+    initialPosition.arrows[23].checkers.push(i);
   }
 
   return initialPosition;

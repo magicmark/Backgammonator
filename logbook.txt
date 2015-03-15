@@ -1,4 +1,4 @@
-logbook
+Logbook
 =======
 
 How to do continual running of algorithm? spawn separate process or just run each time?
@@ -6,5 +6,18 @@ ideally, run continually, but for now, run each time.
 
 Possible moves might contain a load of moves that may never happen, because of dice
 
+Too many representations of objects on client.server
 
-Too many representations of objects
+How does array.splice work?
+
+Representation of the checkers/arrows - array of object?
+
+Quickest way to duplicate object? 
+
+Saturday: Javascript is a pain in the bum. Not having typesafe function parameters is the biggest concern. Named parameters would be nice. The fact that "undefined" is a type makes things very painful and passing stuff around becomes problematic!
+.
+`-> Having trouble passing position to server $http.post
+
+
+
+FIXES
