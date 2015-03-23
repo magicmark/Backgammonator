@@ -9,7 +9,7 @@ An online Plakoto AI.
 To run:
 
 ### Server
-To installm inside the api folder, load the dependencies for grunt, bower and node modules using
+To install, inside the api folder, load the dependencies for grunt, bower and node modules using
 ```
 npm install
 ```
