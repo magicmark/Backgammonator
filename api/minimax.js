@@ -7,7 +7,10 @@ function evaluatePosition (position) {
   var rank = 0;
   for (var i in position.arrows) {
     var arrow = position.arrows[i];
-    // if arrow is pinning any opponent checkers, ++
+    if (position.checkers[arrow.checkers[arrow.checkers.length-1]].player == 0) {
+      rank += 5;
+      rank += i; // TODO: Set this correctly
+    }
   }
   return 10;
 }

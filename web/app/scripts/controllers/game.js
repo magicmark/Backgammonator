@@ -153,6 +153,13 @@ angular.module('backgammonatorApp')
           return false;
         }
 
+        // Already made a move
+        if (arrowId == this.currArrow + $scope.dice[0] + $scope.dice[1]) {
+          if ($scope.movesMade == 1) {
+            return false;
+          }
+        }
+
         var arrow = $scope.arrows[arrowId];
         if (!arrow.checkers.length) {
           // Empty array of checkers, so valid move
@@ -298,6 +305,7 @@ angular.module('backgammonatorApp')
       $scope.canMove = false;
       $scope.dicerollmessage = "Waiting for server...";
       API.askForMove(ng2api()).then(function (result) {
+        console.dir(result);
         $scope.dicerollmessage = "Computer rolled: " + JSON.stringify(result.dice, null, 2) + "!";
 
         var arrowToMoveFrom, arrowToMoveTo, move;

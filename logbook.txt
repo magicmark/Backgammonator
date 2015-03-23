@@ -1,23 +1,66 @@
 Logbook
 =======
 
-How to do continual running of algorithm? spawn separate process or just run each time?
-ideally, run continually, but for now, run each time.
+-----------------
+Tuesday 3rd March
+-----------------
 
-Possible moves might contain a load of moves that may never happen, because of dice
+3pm - How to do continual running of algorithm? spawn separate process or just run each time?
+Ideally, should run continually. Will look into this, but for now, run each time.
 
-Too many representations of objects on client.server
+6:20pm - Thought: Possible moves might contain a load of moves that may never happen, because of the randomness of the dice...
 
-How does array.splice work?
+------------------
+Thursday 5th March
+------------------
 
-Representation of the checkers/arrows - array of object?
+8:45am I have too many different representations of the same objects on the client and server. This is what I was trying to avoid. Oh dear. Must fix in refactor.
 
-Quickest way to duplicate object? 
+Way that I've settled on doing it - 
+A position contains arrows and checkers. Each arrow contains an array of checkers IDs (ie a list of pointers to checkers), which can be passed and moved around as the checker is done so.
 
-Saturday: Javascript is a pain in the bum. Not having typesafe function parameters is the biggest concern. Named parameters would be nice. The fact that "undefined" is a type makes things very painful and passing stuff around becomes problematic!
-.
-`-> Having trouble passing position to server $http.post
+------------------
+Saturday 7th March
+------------------
+
+10pm - I need to remove a specific element from an array. How do I do that? If I remember correctly, "delete element" leaves an empty space in the array. 
+Checking MDN, array splice seems to be what I need: array.splice(start, deletecount);
 
 
+2:10am - Currently storing checkers and arrows in arrays. Not good for a few reasons - I can't find the elements I need in O(n) time, and I can't be sure other languages might not change the order of the array.
+Solution: Use array for checkers, object for arrows.
 
-FIXES
+Best way seems to be store an array of objects, with each object containing ID and some other attributes about the object. This way I can always be sure it's the correct element.
+
+------------------
+Monday 9th March
+------------------
+
+6:30pm - I need to make deep copies of my "position" object. What's the best quickest way to duplicate objects in JavaScript? 
+Solution: var newobject = JSON.parse(JSON.stringify(object))
+Con: Doesn't copy method attributes.
+
+11:40pm - UPDATE:
+Insight: Not hugely terrible - I've taken out the methods out from the object and put them in the code. Presumably slightly more efficient this way anyway...
+
+------------------
+Sunday 8th March
+------------------
+
+11:15am - Saturday: Javascript is a pain again!. Not having typesafe function parameters is the biggest concern. Named parameters would be nice. The fact that "undefined" is a type makes things very painful and passing stuff around becomes problematic!
+
+A slight refactor - combining the animation function and the move checker function allows me to use the same function for both server made moves and human made moves.
+
+--------------------
+Tuesday 10th March
+--------------------
+
+9:40pm - Having major troubles passing position to server using angular's $http.
+Turns out I need to use POST rather than GET to attach a JSON body.
+
+-------------------
+Saturday 14th March
+-------------------
+
+2pm - Project presentation is coming up - I need to prioritise features.
+Things to prioritise: End game recognition, multi user play. The server supports these things and I should be able to implement them in time.
