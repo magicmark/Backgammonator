@@ -20,3 +20,7 @@ To run Backgammoantor, go the client directory and run
 ```
 grunt serve
 ```
+
+## Repository
+
+All source code can be found on git here: https://git.larah.me/magicmark/3rd-Year-Project
