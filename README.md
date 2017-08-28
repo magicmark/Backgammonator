@@ -1,5 +1,7 @@
 # Backgammonator
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/magicmark/Backgammonator.svg)](https://greenkeeper.io/)
+
 > Mark Larah -  3rd Year Project
 
 An online Plakoto AI.
